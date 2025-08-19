@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人导航</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: white; /* 默认白色背景 */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 0.5s ease;
+        }
+
+        .link-container {
+            background-color: rgba(255, 255, 255, 0.5); /* 初始透明度128 (0.5*255≈128) */
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: background-color 2s ease;
+        }
+
+        .link-container:hover {
+            background-color: rgba(255, 255, 255, 0.78); /* 透明度200 (0.78*255≈200) */
+        }
+
+        .link-button {
+            width: 500px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: rgba(0, 0, 0, 0.72); /* 初始文字透明度183 (128+55=183) */
+            cursor: pointer;
+            border-radius: 15px;
+            transition: 
+                color 2s ease,
+                box-shadow 0.3s ease;
+        }
+
+        .link-button:hover {
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 1);
+            color: rgba(0, 0, 0, 0.92); /* 悬停时文字透明度 (200+55=255, 但最大为255) */
+        }
+
+        .error-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+            max-width: 80%;
+            text-align: center;
+        }
+
+        .close-btn {
+            margin-top: 10px;
+            padding: 5px 15px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="link-container">
+        <div class="link-button" data-url="https://wwyg.lanzouo.com/b00y9z537a">公用</div>
+        <div class="link-button" data-url="https://wwyg.lanzouo.com/b00ya080hg">无题</div>
+    </div>
+
+    <div class="error-popup" id="errorPopup">
+        <p id="errorMessage">加载背景图片时出错</p>
+        <button class="close-btn" onclick="document.getElementById('errorPopup').style.display = 'none'">关闭</button>
+    </div>
+
+    <script>
+        // 设置随机背景图片
+        function setRandomBackground() {
+            const bgUrl = 'https://t.alcy.cc/fj';
+            const img = new Image();
+            
+            img.onload = function() {
+                document.body.style.backgroundImage = `url(${bgUrl})`;
+            };
+            
+            img.onerror = function() {
+                showError('无法加载背景图片，已使用默认白色背景');
+            };
+            
+            img.src = bgUrl + '?random=' + new Date().getTime(); // 添加随机参数避免缓存
+        }
+
+        // 显示错误弹窗
+        function showError(message) {
+            const errorPopup = document.getElementById('errorPopup');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            errorMessage.textContent = message;
+            errorPopup.style.display = 'block';
+        }
+
+        // 初始化链接按钮事件
+        function initLinkButtons() {
+            const buttons = document.querySelectorAll('.link-button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const url = this.getAttribute('data-url');
+                    window.open(url, '_blank');
+                });
+            });
+        }
+
+        // 监听容器悬停事件来调整文字透明度
+        function setupTextOpacityTransition() {
+            const container = document.querySelector('.link-container');
+            const buttons = document.querySelectorAll('.link-button');
+            
+            container.addEventListener('mouseenter', function() {
+                buttons.forEach(button => {
+                    button.style.color = 'rgba(0, 0, 0, 0.92)'; // 200+55=255，但最大为255
+                });
+            });
+            
+            container.addEventListener('mouseleave', function() {
+                buttons.forEach(button => {
+                    button.style.color = 'rgba(0, 0, 0, 0.72)'; // 128+55=183
+                });
+            });
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', function() {
+            setRandomBackground();
+            initLinkButtons();
+            setupTextOpacityTransition();
+        });
+    </script>
+</body>
+</html>
